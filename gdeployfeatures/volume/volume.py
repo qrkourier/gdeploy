@@ -60,8 +60,9 @@ def volume_create(section_dict):
     # Configure SSL on the volume if enable_ssl is set.
     if section_dict['enable_ssl'].lower() == "yes":
         if section_dict.has_key('ssl_clients'):
-            section_dict['ssl_hosts'] = list(set(section_dict['ssl_clients'] +
-                                                 Global.hosts))
+            section_dict['ssl_hosts'] = list(set(helpers.listify
+                                                 (section_dict['ssl_clients'])\
+                                                  + Global.hosts))
         else:
             section_dict['ssl_hosts'] = list(set(Global.hosts))
 
@@ -70,9 +71,9 @@ def volume_create(section_dict):
         helpers.write_to_inventory('ssl_hosts', section_dict['ssl_hosts'])
         # Enable SSL on the volume
         yamls.append(defaults.ENABLE_SSL)
+        if Global.trace:
+            Global.logger.info("Executing %s."% defaults.ENABLE_SSL)
     return section_dict, yamls
-    if Global.trace:
-        Global.logger.info("Executing %s."% defaults.ENABLE_SSL)
 
 def get_smb_data(section_dict):
     smb = section_dict.get('smb')
@@ -272,9 +273,9 @@ def volume_smb_setup(section_dict):
     for key, value in SMB_DEFAULTS.iteritems():
         if section_dict[key]:
             options += key + ' = ' + str(section_dict[key]) + '\n'
-    section_dict['key'] = ['stat-prefetch', 'server.allow-insecure',
-            'storage.batch-fsync-delay-usec']
-    section_dict['value'] = ['off', 'on', 0]
+    section_dict['key'] = ['server.allow-insecure',
+                           'storage.batch-fsync-delay-usec']
+    section_dict['value'] = ['on', 0]
     section_dict, yml = volume_set(section_dict)
     section_dict['service'] = 'glusterd'
     section_dict['state'] = 'started'
