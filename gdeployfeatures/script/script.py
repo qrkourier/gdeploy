@@ -33,6 +33,6 @@ def script_execute(section_dict):
     for sh, args in zip(section_dict['file'], section_dict['args']):
         data.append(sh + ' ' + args)
     section_dict['script'] = data
-    if Global.trace:
-        Global.logger.info("Executing %s."%defaults.RUN_SCRIPT)
+    #if Global.trace:
+    #    Global.logger.info("Executing %s."%defaults.RUN_SCRIPT)
     return section_dict, defaults.RUN_SCRIPT
